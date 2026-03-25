@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Unit Dispatch | Login</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(135deg, #fdfcfb, #f8fbff, #eef4ff);
+    }
+
+    /* GIF background ke liye yaha image lagani hai */
+    .page-bg {
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(rgba(14, 14, 14, 0.72), rgba(130, 125, 125, 0.72)),
+        url("https://i.pinimg.com/originals/a7/07/f0/a707f04abbdcf93b9dcc4916a5d3059c.gif") center center / cover no-repeat;
+      z-index: 0;
+    }
+
+    /* Agar GIF nahi lagani ho to ye soft design visible rahega */
+    .page-bg::before,
+    .page-bg::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(40px);
+      opacity: 0.55;
+    }
+
+    .page-bg::before {
+      width: 320px;
+      height: 320px;
+      background: #dbeafe;
+      top: -80px;
+      left: -70px;
+    }
+
+    .page-bg::after {
+      width: 300px;
+      height: 300px;
+      background: #fde68a;
+      bottom: -90px;
+      right: -60px;
+    }
+
+    .login-container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 430px;
+    }
+
+    .login-card {
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.8);
+      border-radius: 26px;
+      padding: 32px 26px;
+      box-shadow:
+        0 20px 50px rgba(15, 23, 42, 0.10),
+        0 8px 20px rgba(15, 23, 42, 0.06);
+      color: #0f172a;
+    }
+
+    .brand {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .brand-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #eff6ff, #ffffff);
+      color: #2563eb;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      margin-bottom: 14px;
+      border: 1px solid #dbeafe;
+    }
+
+    .brand h1 {
+      font-size: 31px;
+      line-height: 1.15;
+      margin-bottom: 10px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .brand p {
+      font-size: 14px;
+      color: #64748b;
+      line-height: 1.5;
+    }
+
+    .form-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .input-group label {
+      font-size: 14px;
+      color: #334155;
+      font-weight: 700;
+    }
+
+    .input-group input {
+      height: 52px;
+      border: 1px solid #dbe4f0;
+      outline: none;
+      border-radius: 14px;
+      padding: 0 16px;
+      font-size: 15px;
+      background: rgba(255,255,255,0.95);
+      color: #0f172a;
+      transition: 0.25s ease;
+    }
+
+    .input-group input::placeholder {
+      color: #94a3b8;
+    }
+
+    .input-group input:focus {
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.18);
+      background: #fff;
+    }
+
+    .btn {
+      height: 52px;
+      border: none;
+      outline: none;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 800;
+      transition: all 0.25s ease;
+      letter-spacing: 0.2px;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: #fff;
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.20);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      color: #fff;
+      flex: 1;
+      box-shadow: 0 10px 22px rgba(34, 197, 94, 0.16);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #64748b, #94a3b8);
+      color: #fff;
+      flex: 1;
+      box-shadow: 0 10px 22px rgba(100, 116, 139, 0.16);
+    }
+
+    .otp-section {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      padding-top: 6px;
+    }
+
+    .otp-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .message-box {
+      min-height: 24px;
+      font-size: 14px;
+      text-align: center;
+      font-weight: 700;
+      padding-top: 2px;
+    }
+
+    .message-box.success {
+      color: #15803d;
+    }
+
+    .message-box.error {
+      color: #dc2626;
+    }
+
+    .message-box.info {
+      color: #2563eb;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 480px) {
+      .login-card {
+        padding: 24px 18px;
+        border-radius: 22px;
+      }
+
+      .brand h1 {
+        font-size: 26px;
+      }
+
+      .otp-actions {
+        flex-direction: column;
+      }
+
+      .btn,
+      .input-group input {
+        height: 50px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-bg"></div>
+
+  <div class="login-container">
+    <div class="login-card">
+      <div class="brand">
+        <div class="brand-badge">Friends Steel Group Internal Access</div>
+        <h1>All Unit Dispatch</h1>
+        <p>Enter your registered mobile number to receive a WhatsApp OTP and continue securely.</p>
+      </div>
+
+      <div class="form-section">
+        <div class="input-group">
+          <label for="phone">Mobile Number</label>
+          <input
+            type="tel"
+            id="phone"
+            maxlength="10"
+            placeholder="Enter 10 digit mobile number"
+            autocomplete="off"
+          />
+        </div>
+
+        <button id="sendOtpBtn" class="btn btn-primary">Send OTP</button>
+
+        <div id="otpSection" class="otp-section hidden">
+          <div class="input-group">
+            <label for="otp">Enter OTP</label>
+            <input
+              type="text"
+              id="otp"
+              maxlength="6"
+              placeholder="Enter 6 digit OTP"
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="otp-actions">
+            <button id="verifyOtpBtn" class="btn btn-success">Verify OTP</button>
+            <button id="resendOtpBtn" class="btn btn-secondary">Resend OTP</button>
+          </div>
+        </div>
+
+        <div id="messageBox" class="message-box"></div>
+      </div>
+
+      <div class="footer-note">
+        Authorized users only
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const productId = "f84e4fb9-8aec-464e-b031-6c5667b6f53d";
+    const phoneId = "52425";
+    const token = "ef3ecb89-0b0d-44af-a9c1-7959d8dcec50";
+    const url = `https://api.maytapi.com/api/${productId}/${phoneId}/sendMessage`;
+
+    const allowedNumbers = [
+      "8140989985",
+      "9825039632",
+      "9687292559",
+      "9982959199",
+      "9978795000",
+      "9979616000"
+    ];
+
+ const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
+
+    const phoneInput = document.getElementById("phone");
+    const otpInput = document.getElementById("otp");
+    const sendOtpBtn = document.getElementById("sendOtpBtn");
+    const verifyOtpBtn = document.getElementById("verifyOtpBtn");
+    const resendOtpBtn = document.getElementById("resendOtpBtn");
+    const otpSection = document.getElementById("otpSection");
+    const messageBox = document.getElementById("messageBox");
+
+    function showMessage(message, type = "info") {
+      messageBox.textContent = message;
+      messageBox.className = `message-box ${type}`;
+    }
+
+    function sanitizePhone(value) {
+      return value.replace(/\D/g, "").slice(0, 10);
+    }
+
+    function generateOtp() {
+      return Math.floor(100000 + Math.random() * 900000).toString();
+    }
+
+    function isAllowedNumber(phone) {
+      return allowedNumbers.includes(phone);
+    }
+
+    function isValidPhone(phone) {
+      return /^\d{10}$/.test(phone);
+    }
+
+    function setLoginSession(phone) {
+      const expiresAt = Date.now() + SESSION_DURATION_MS;
+      const sessionData = {
+        isLoggedIn: true,
+        phone,
+        expiresAt
+      };
+      localStorage.setItem("fs_auth_session", JSON.stringify(sessionData));
+    }
+
+    function getLoginSession() {
+      const raw = localStorage.getItem("fs_auth_session");
+      if (!raw) return null;
+
+      try {
+        const session = JSON.parse(raw);
+        if (!session?.isLoggedIn || !session?.expiresAt) return null;
+
+        if (Date.now() > session.expiresAt) {
+          localStorage.removeItem("fs_auth_session");
+          return null;
+        }
+
+        return session;
+      } catch (e) {
+        localStorage.removeItem("fs_auth_session");
+        return null;
+      }
+    }
+
+    function redirectToDashboard() {
+      window.location.href = "index.html";
+    }
+
+    const existingSession = getLoginSession();
+    if (existingSession) {
+      redirectToDashboard();
+    }
+
+    function saveOtp(phone, otp) {
+      const otpData = {
+        phone,
+        otp,
+        createdAt: Date.now()
+      };
+      localStorage.setItem("fs_login_otp", JSON.stringify(otpData));
+    }
+
+    function getSavedOtp() {
+      const raw = localStorage.getItem("fs_login_otp");
+      if (!raw) return null;
+
+      try {
+        return JSON.parse(raw);
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function clearOtp() {
+      localStorage.removeItem("fs_login_otp");
+    }
+
+    async function sendOtpToWhatsApp(phone, otp) {
+      const message = `Hello,
+
+Your OTP for login is ${otp}.
+Please do not share this OTP with anyone.
+
+Regards,
+Friends Steel Group`;
+
+      const payload = {
+        to_number: "91" + phone,
+        type: "text",
+        message: message
+      };
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-maytapi-key": token
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to send OTP");
+      }
+
+      return data;
+    }
+
+    phoneInput.addEventListener("input", () => {
+      phoneInput.value = sanitizePhone(phoneInput.value);
+    });
+
+    otpInput.addEventListener("input", () => {
+      otpInput.value = otpInput.value.replace(/\D/g, "").slice(0, 6);
+    });
+
+    sendOtpBtn.addEventListener("click", async () => {
+      const phone = sanitizePhone(phoneInput.value);
+      phoneInput.value = phone;
+
+      if (!isValidPhone(phone)) {
+        showMessage("Please enter a valid 10 digit mobile number.", "error");
+        return;
+      }
+
+      if (!isAllowedNumber(phone)) {
+        showMessage("This mobile number is not allowed to login.", "error");
+        return;
+      }
+
+      sendOtpBtn.disabled = true;
+      showMessage("Sending OTP...", "info");
+
+      try {
+        const otp = generateOtp();
+        saveOtp(phone, otp);
+
+        await sendOtpToWhatsApp(phone, otp);
+
+        otpSection.classList.remove("hidden");
+        showMessage("OTP sent successfully on WhatsApp.", "success");
+      } catch (error) {
+        console.error("OTP send error:", error);
+        showMessage("OTP send failed. Please try again.", "error");
+      } finally {
+        sendOtpBtn.disabled = false;
+      }
+    });
+
+    verifyOtpBtn.addEventListener("click", () => {
+      const enteredOtp = otpInput.value.trim();
+      const currentPhone = sanitizePhone(phoneInput.value);
+      const savedOtpData = getSavedOtp();
+
+      if (!savedOtpData) {
+        showMessage("No OTP found. Please send OTP again.", "error");
+        return;
+      }
+
+      if (savedOtpData.phone !== currentPhone) {
+        showMessage("Phone number mismatch. Please resend OTP.", "error");
+        return;
+      }
+
+      if (enteredOtp.length !== 6) {
+        showMessage("Please enter a valid 6 digit OTP.", "error");
+        return;
+      }
+
+      const otpAge = Date.now() - savedOtpData.createdAt;
+      if (otpAge > SESSION_DURATION_MS) {
+        clearOtp();
+        showMessage("OTP expired. Please request a new OTP.", "error");
+        return;
+      }
+
+      if (enteredOtp !== savedOtpData.otp) {
+        showMessage("Invalid OTP. Please try again.", "error");
+        return;
+      }
+
+      setLoginSession(currentPhone);
+      clearOtp();
+      showMessage("Login successful. Redirecting...", "success");
+
+      setTimeout(() => {
+        redirectToDashboard();
+      }, 700);
+    });
+
+    resendOtpBtn.addEventListener("click", async () => {
+      const phone = sanitizePhone(phoneInput.value);
+      phoneInput.value = phone;
+
+      if (!isValidPhone(phone)) {
+        showMessage("Please enter a valid 10 digit mobile number.", "error");
+        return;
+      }
+
+      if (!isAllowedNumber(phone)) {
+        showMessage("This mobile number is not allowed to login.", "error");
+        return;
+      }
+
+      resendOtpBtn.disabled = true;
+      showMessage("Resending OTP...", "info");
+
+      try {
+        const otp = generateOtp();
+        saveOtp(phone, otp);
+
+        await sendOtpToWhatsApp(phone, otp);
+
+        showMessage("OTP resent successfully on WhatsApp.", "success");
+      } catch (error) {
+        console.error("Resend OTP error:", error);
+        showMessage("Failed to resend OTP. Please try again.", "error");
+      } finally {
+        resendOtpBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
