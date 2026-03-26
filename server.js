@@ -14,7 +14,8 @@ app.use(express.json());
 app.use(express.static(__dirname));
 
 const bigquery = new BigQuery({
-  projectId: "sharedproject-490507"
+  projectId: "sharedproject-490507",
+  credentials: JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON)
 });
 
 function escapeSql(value) {
